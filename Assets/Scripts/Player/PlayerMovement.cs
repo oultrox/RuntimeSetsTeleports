@@ -11,38 +11,39 @@ namespace Gameplay.Player
         private Vector3 movementDirection = Vector3.zero;
         private readonly float gravityScale = 10;
 
-        void Awake()
+        private void Awake()
         {
             playerController = GetComponent<CharacterController>();
         }
 
-        void Update()
+        private void Update()
         {
+            ApplyGravity();
             GetInputs();
-            CheckJump();
             MovePlayer();
         }
 
         private void MovePlayer()
         {
-            // Apply gravity
-            movementDirection.y -= gravityScale * Time.deltaTime;
-
-            playerController.Move(movementSpeed * Time.deltaTime * movementDirection);
+            // Movement based on transform rotation. 
+            // playerController.Move(transform.rotation * movementDirection * movementSpeed * Time.deltaTime);
+            playerController.Move(movementDirection * (movementSpeed * Time.deltaTime));
         }
 
-        private void CheckJump()
+        private void ApplyGravity()
         {
-            if (Input.GetButton("Jump"))
-            {
-                movementDirection.y = jumpForce;
-            }
+            movementDirection.y -= gravityScale * Time.deltaTime;
         }
 
         private void GetInputs()
         {
             movementDirection.x = Input.GetAxisRaw("Horizontal");
             movementDirection.z = Input.GetAxisRaw("Vertical");
+            
+            if (Input.GetButton("Jump"))
+            {
+                movementDirection.y = jumpForce;
+            }
         }
     }
 
